@@ -1,0 +1,146 @@
+{
+  "name": "airbyte_data_ingestion_failure",
+  "description": "Airbyte Data Ingestion Failure is a type of incident where Airbyte, an open-source data integration platform, fails to ingest data from one or more sources. This can happen due to several reasons such as connectivity issues, source API changes, incorrect configuration, or platform limitations. As a result, the data that needs to be ingested into the target system cannot be processed, which can cause delays, errors, or data loss. This type of incident requires immediate attention and resolution to ensure that the data pipeline is functioning correctly and the data is available for downstream applications.",
+  "params": [
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    },
+    {
+      "name": "AIRBYTE_SERVICE_NAME",
+      "value": ""
+    },
+    {
+      "name": "DEPLOYMENT_NAME",
+      "value": ""
+    },
+    {
+      "name": "DATABASE_POD_NAME",
+      "value": ""
+    },
+    {
+      "name": "AIRBYTE_POD_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Airbyte Data Ingestion Failure\nAirbyte Data Ingestion Failure is a type of incident where Airbyte, an open-source data integration platform, fails to ingest data from one or more sources. This can happen due to several reasons such as connectivity issues, source API changes, incorrect configuration, or platform limitations. As a result, the data that needs to be ingested into the target system cannot be processed, which can cause delays, errors, or data loss. This type of incident requires immediate attention and resolution to ensure that the data pipeline is functioning correctly and the data is available for downstream applications."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Confirm that the Airbyte pod is running"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl get pods | grep ${AIRBYTE_POD_NAME}`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the logs of the Airbyte pod for any errors"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl logs ${AIRBYTE_POD_NAME}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Verify that the Airbyte service is running"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl get services | grep ${AIRBYTE_SERVICE_NAME}`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the endpoints of the Airbyte service to ensure they're healthy"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl describe endpoints ${AIRBYTE_SERVICE_NAME}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Confirm that any dependencies of the Airbyte service, such as a database, are also running"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl get pods | grep ${DATABASE_POD_NAME}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the logs of the database pod for any errors"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl logs ${DATABASE_POD_NAME}`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Verify that the Airbyte pod has the correct environment variables set, such as database connection details"
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl describe pod ${AIRBYTE_POD_NAME} | grep -A 10 \"Environment:\"`"
+    },
+    {
+      "name": "cell_16",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the configuration files for the Airbyte pod and make sure they're correct"
+    },
+    {
+      "name": "cell_17",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl describe pod ${AIRBYTE_POD_NAME} | grep -A 10 \"Volumes:\"`"
+    },
+    {
+      "name": "cell_18",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Restart the Airbyte server and try the ingestion process again."
+    },
+    {
+      "name": "cell_19",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | random=1 | limit=1 | invoke_restart_airbyte_server($NAMESPACE, $DEPLOYMENT_NAME)"
+    }
+  ]
+}
